@@ -1,13 +1,5 @@
-<!DOCTYPE HTML>
-<html>
-<head>
-<meta charset="utf-8">
-<title>三択クイズ</title>
-</head>
-<body>
-<h1>三択クイズ</h1>
-<hr>
-<h2>問題</h2>
+
+<h2>2gether</h2>
 <div id="text_q"></div>
 <h2>選択</h2>
 <div id="text_s"></div>
@@ -58,7 +50,6 @@ function anser(num) {
 	var s;
 	s = (count + 1) + "問目：";
 	//答え合わせ
-	//答え合わせ
 	if (num == qa[count][q_sel + 1]) {
 		//正解
 		ansers[count] = "○";
@@ -74,7 +65,7 @@ function anser(num) {
 	if (count < qa.length) {
 		quiz();
 	} else {
-		//終了
+		//終了。成績発表
 		s = "<table border='2'><caption>成績発表</caption>";
 		//1行目
 		s += "<tr><th>問題</th>";
