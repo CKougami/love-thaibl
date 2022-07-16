@@ -1,92 +1,114 @@
+<div class="container">
+  <div id="js-question" class="mt-3 alert alert-dark" role="alert">
+    問題文
+  </div>
+  <div>
+    <ul class="list-group list-group-numbered">
+      <li type="button" class="list-group-item">選択肢1</li>
+      <li type="button" class="list-group-item">選択肢2</li>
+      <li type="button" class="list-group-item">選択肢3</li>
+      <li type="button" class="list-group-item">選択肢4</li>
+    </ul>
+  </div>
 
-<h2>2gether</h2>
-<div id="text_q"></div>
-<h2>選択</h2>
-<div id="text_s"></div>
-<h2>解答</h2>
-<div id="text_a"></div>
+  <div id="js-question" class="mt-3 alert" role="alert">
+    <img src="2gether_img.webp" class="img-fluid" alt="img-fluid">
+  </div>
+</div>
 
+<%# クイズ ------------------------------------------------------%>
 <script type="text/javascript">
-//問題と解答
-qa = new Array();
-qa[0] = ["初対面で、サラワットを見つめるタインにサラワットが放った言葉は？","見てんじゃねえよ","あっちへ行け","落ちるまでキスするぞ",3];
-qa[1] = ["2話でグリーンから逃げるためにタインとサラワットが隠れた場所は？","音楽室","ロッカー","男子トイレの個室",2];
-qa[2] = ["SNSでサラワットが投稿した「1か2か」という謎のメッセージ。2は『俺はお前を口説く』、じゃあ1は？","お前が俺を置きらめる","俺はニセ彼氏をやめる","お前が俺に口説かれる",3];
-qa[3] = ["4話で登場したサラワットの弟の名前は？","プーコン","ウーコン","ピーター",1];
-qa[4] = ["5話でタインの浮気を阻止するべくタインへ言ったセリフは「隠れてペアと話したら、○○○○○○からな」","ニセ彼氏をやめる","お前の胸を揉む","お前のギターを壊す",2];
-qa[5] = ["サラワットの弟が恋した先輩の名前は？","ビル","ジル","ミル",3];
-qa[6] = ["7話で「もしお前が俺の恋人だったら、髪の毛から影まで全部にキスするよ。」？","fly","dragonfly","butterfly",2];
-qa[7] = ["サラワットとタインが落ち込んでるときに聴く曲は？","Scrubb","Scrum","Smile",1];
-qa[8] = ["初めてのお泊まり。ソファで寝るか、ベッドで俺と一緒に寝るかと迫られたタインが選んだのは？","もちろんベッド♡","家に帰る","ソファー",3];
-qa[9] = ["学園祭でタインがサラワットのペットボトルに貼ったメッセージは？","タインはサラワットが好き","サラワットには恋人がいる。名前はタイン","サラワットの好きな人はタイン",2];
+const quiz = [
+  {
+    question: '初対面で、sarawatを見つめるtineにsarawatが放った言葉は？',
+    answers: [ '見てんじゃねえよ', '男に見つめられても気持ち悪い', 'キスして欲しいのか？', '落ちるまでキスするぞ'],
+    correct: '落ちるまでキスするぞ'
+  }, {
+    question: '2話でgreenから逃げるためにtineとsarawatが隠れた場所は？',
+    answers: [ '音楽室', '男子トイレの個室', 'ロッカー', 'テーブルの下'],
+    correct: 'ロッカー'
+  }, {
+    question: 'SNSでsarawatが投稿した「1か2か」という謎のメッセージ。2は『俺はお前を口説く』、じゃあ1は？',
+    answers: [ 'お前は俺を諦める', 'お前が俺に口説かれる', '俺はお前を諦める', 'もう一度俺を口説いてみろ'],
+    correct: 'お前が俺に口説かれる'
+  }
+];
 
-//初期設定
-q_sel = 3; //選択肢の数
+const $window = window;
+const $doc = document;
+const $question = $doc.getElementById('js-question');
+const $buttons = $doc.querySelectorAll('li');
 
-setReady();
-function setReady() {
-	count = 0; //問題番号
-	ansers = new Array(); //解答記録
-	
-	//最初の問題
-	quiz();
+const quizLen = quiz.length;
+let quizCount = 0;
+let score = 0;
+
+const init = () => {
+  $question.textContent = quiz[quizCount].question;
+  
+  const buttonLen = $buttons.length;
+  let btnIndex = 0;
+  
+  while(btnIndex < buttonLen){
+    $buttons[btnIndex].textContent = quiz[quizCount].answers[btnIndex];
+    btnIndex++;
+  }
+};
+
+const goToNext = () => {
+  quizCount++;
+  if(quizCount < quizLen){
+    init(quizCount);
+  } else {
+    // $window.alert('クイズ終了！');
+    showEnd();
+  }
+};
+
+const judge = (elm) => {
+  if(elm.textContent === quiz[quizCount].correct){
+    $window.alert('正解!');
+    score++;
+  } else {
+    $window.alert('不正解!');
+  }
+  goToNext();
+};
+
+const showEnd = () => {
+  $question.textContent = '終了！あなたのスコアは' + score + '/' + quizLen + 'です';
+  
+  const $items = $doc.getElementById('js-items');
+  $items.style.visibility = 'hidden';
+};
+
+init();
+
+let answersIndex = 0;
+let answersLen = quiz[quizCount].answers.length;
+
+while(answersIndex < answersLen){
+  $buttons[answersIndex].addEventListener('click', (e) => {
+    judge(e.target);
+  });
+  answersIndex++;
 }
-
-//問題表示
-function quiz() {
-	var s, n;
-	//問題
-	document.getElementById("text_q").innerHTML = (count + 1) + "問目：" + qa[count][0];
-	//選択肢
-	s = "";
-	for (n=1;n<=q_sel;n++) {
-		s += "【<a href='javascript:anser(" + n + ")'>" + n + "：" + qa[count][n] + "</a>】";
-	}
-	document.getElementById("text_s").innerHTML = s;
-}
-
-//解答表示
-function anser(num) {
-	var s;
-	s = (count + 1) + "問目：";
-	//答え合わせ
-	if (num == qa[count][q_sel + 1]) {
-		//正解
-		ansers[count] = "○";
-	} else {
-		ansers[count] = "×";
-	}
-	s += ansers[count] + qa[count][num];
-	document.getElementById("text_a").innerHTML = s;
-	document.getElementById("text_a").innerHTML = s;
-
-	//次の問題を表示
-	count++;
-	if (count < qa.length) {
-		quiz();
-	} else {
-		//終了。成績発表
-		s = "<table border='2'><caption>成績発表</caption>";
-		//1行目
-		s += "<tr><th>問題</th>";
-		for (n=0;n<qa.length;n++) {
-			s += "<th>" + (n+1) + "</th>";
-		}
-		s += "</tr>";
-		//2行目
-		s += "<tr><th>成績</th>";
-		for (n=0;n<qa.length;n++) {
-			s += "<td>" + ansers[n] + "</td>";
-		}
-		s += "</tr>";
-		s += "</table>";
-		document.getElementById("text_q").innerHTML = s;
-		//次の選択肢
-		s = "【<a href='javascript:history.back()'>前のページに戻る</a>】";
-		s += "【<a href='javascript:setReady()'>同じ問題を最初から</a>】";
-		s += "【<a href=''>次の問題に進む</a>】";
-		document.getElementById("text_s").innerHTML = s;
-	}
-}
-
 </script>
+
+
+
+  
+  <%# // //問題と解答
+  // qa = new Array();
+  // qa[0] = ["初対面で、サラワットを見つめるタインにサラワットが放った言葉は？","見てんじゃねえよ","あっちへ行け","落ちるまでキスするぞ",3];
+  // qa[1] = ["2話でグリーンから逃げるためにタインとサラワットが隠れた場所は？","音楽室","ロッカー","男子トイレの個室",2];
+  // qa[2] = ["SNSでサラワットが投稿した「1か2か」という謎のメッセージ。2は『俺はお前を口説く』、じゃあ1は？","お前が俺を置きらめる","俺はニセ彼氏をやめる","お前が俺に口説かれる",3];
+  // qa[3] = ["4話で登場したサラワットの弟の名前は？","プーコン","ウーコン","ピーター",1];
+  // qa[4] = ["5話でタインの浮気を阻止するべくタインへ言ったセリフは「隠れてペアと話したら、○○○○○○からな」","ニセ彼氏をやめる","お前の胸を揉む","お前のギターを壊す",2];
+  // qa[5] = ["サラワットの弟が恋した先輩の名前は？","ビル","ジル","ミル",3];
+  // qa[6] = ["7話で「もしお前が俺の恋人だったら、髪の毛から影まで全部にキスするよ。」？","fly","dragonfly","butterfly",2];
+  // qa[7] = ["サラワットとタインが落ち込んでるときに聴く曲は？","Scrubb","Scrum","Smile",1];
+  // qa[8] = ["初めてのお泊まり。ソファで寝るか、ベッドで俺と一緒に寝るかと迫られたタインが選んだのは？","もちろんベッド♡","家に帰る","ソファー",3];
+  // qa[9] = ["学園祭でタインがサラワットのペットボトルに貼ったメッセージは？","タインはサラワットが好き","サラワットには恋人がいる。名前はタイン","サラワットの好きな人はタイン",2];
+
+  %>
